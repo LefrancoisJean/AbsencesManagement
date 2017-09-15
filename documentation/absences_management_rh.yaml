@@ -1,0 +1,921 @@
+swagger: '2.0'
+
+################################################################################
+#                              API Information                                 #
+################################################################################
+info:
+  version: "1.0.0"
+  title: "Galerie de Latifa / Gestion des absences"
+  description: 
+
+    "Il s'agit de la partie RH permettant la création et la gestion de la base"
+    
+  contact:
+    name: "Galerie de Latifa"
+    email: "galeriedelatifa@free.fr"
+    url: "http://www.galeriedelatifa.fr"
+################################################################################
+#                  Host, Base Path, Schemes and Content Types                  #
+################################################################################
+host: "localhost:8080"
+basePath: "/gestAbs/v1/RhDepartment"
+schemes:
+  - "https"
+produces:
+  - "application/json"
+consumes:
+  - "application/json"
+
+
+###############################################################################
+#                                   Paths                                     #
+###############################################################################
+
+paths:
+
+##################
+# Rh_departments #
+##################
+
+    post:
+      summary: "Ajoute un nouveau service Rh"
+      description: "Saisie un service rh"
+      operationId: "addRh"
+      parameters:
+        - $ref: '#/parameters/rh_department'
+      tags:
+        - "Rh department"
+      responses:
+        201:
+          description: "OK"
+          headers:
+            resultat:
+              type: "string"
+              description: "Nom du service Rh"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+
+    get:
+      summary: "liste des services Rh"
+      description: "Retourne la liste des services rh"
+      operationId: "getRh"
+      tags:
+        - "Rh department"
+      responses:
+        200:
+          description: "OK"
+          schema: 
+            type: object
+            properties:
+              pages:
+                $ref: '#/definitions/Rh_departments_dto'
+              paging:
+                $ref: '#/definitions/Paging'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+
+    put:
+      summary: "Modification d'un service Rh"
+      description: "Modifie les paramètres d'une équipe."
+      parameters:
+        - $ref: '#/parameters/rh_department'
+      operationId: "updateRh"
+      tags:
+        - "Rh department"
+      responses:
+        200:
+          description: "Modification effectuée"
+          schema:
+            $ref: '#/definitions/Rh_department_dto'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+
+  /{rh_department_code}:
+    get:
+      summary: "Detail d'un service Rh"
+      description: "Retourne le détail d'un service rh par le code."
+      parameters:
+        - $ref: '#/parameters/rh_department_code'
+      operationId: "getRhByCode"
+      tags:
+        - "Rh department"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: '#/definitions/Rh_department_dto'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+
+    delete:
+      summary: "Suppression d'un service Rh"
+      description: "Supprime un service Rh."
+      parameters:
+        - $ref: '#/parameters/rh_department_code'
+      operationId: "deleteRh"
+      tags:
+        - "Rh department"
+      responses:
+        204:
+          description: "No Content"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+
+  /{rh_department_name}:
+    get:
+      summary: "liste des services Rh par le nom"
+      description: "Retourne une liste des services Rh en faisant une recherche par le nom. Une lettre suffit pour afficher la liste"
+      parameters:
+        - $ref: '#/parameters/rh_department_name'
+      operationId: "getRhByName"
+      tags:
+        - "Rh department"
+      responses:
+        200:
+          description: "OK"
+          schema: 
+            type: object
+            properties:
+              pages:
+                $ref: '#/definitions/Rh_departments_dto'
+              paging:
+                $ref: '#/definitions/Paging'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+
+        
+################################################################################
+#                             Definitions                                      #
+################################################################################
+
+definitions:
+
+  Employe:
+    description: "Table employé"
+    type: object
+    properties:
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      last_name:
+        description: "Nom de l'employé"
+        type: string
+      first_name:
+        description: "Prénom de l'employé"
+        type: string
+      email :
+        description: "Email de l'employé"
+        type: string
+      registration:
+        description: "Matricule de l'employé"
+        type: string
+      team_id :
+        description: "id de l'équipe"
+        type: integer
+      rh_department_id:
+        description: "id du service RH"
+        type: integer
+      users_id: 
+        description: "Profil utilisateur"
+        type: integer
+
+  Users:
+    description: "Table profil"
+    type: object
+    properties:
+      id:
+        description: "Identifiant de la table"
+        type: "integer"
+      registration: 
+        description: "Matricule de l'employé"
+        type: "string"
+      password: 
+        description: "Mot de passe"
+        type: "string"
+      role_id:
+        description: "Autorisations accordées"
+        type: "integer"
+
+  Teams:
+    description: "Table équipe"
+    type: object
+    properties:
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      team_code:
+        description: "Code de l'équipe"
+        type: string
+      team_name:
+        description: "Nom de l'équipe"
+        type: string
+      responsable_name:
+        description: "Nom du responsable"
+        type: string
+      responsable_email:
+        description: "Email du responsable"
+        type: string
+      backup_name:
+        description: "Nom du remplacent"
+        type: string
+      backup_email:
+        description: "Email du remplacement"
+        type: string
+        
+  Rh_department:
+    description: "Table service rh"
+    type: object
+    properties:
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      rh_department_code: 
+        description: "Code du service RH"
+        type: string
+      rh_department_name:
+        description: "Nom du service RH"
+        type: string
+      rh_department_email:
+        description: "Email du service Rh"
+        type: string
+        
+  Role:
+    description: "Table autorisation"
+    type: object
+    properties: 
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      role_code:
+        description: "Code de l'autorisation"
+        type: string
+      role_name: 
+        description: "Nom de l'autorisation"
+        type: string
+        
+  Reliquat:
+    description: "Table reliquat"
+    type: object
+    properties: 
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      ca_number:
+        description: "Nbr de congés annuels"
+        type: integer
+      rtt_number:
+        description: "Nbr de R.T.T."
+        type: integer
+      rc_number:
+        description: "Nbr de repos compensateur"
+        type: integer
+      cm_number:
+        description: "Nbr de congés maladies"
+        type: integer
+      at_number:
+        description: "Nbr d'accidents de travail"
+        type: integer
+      divers_number:
+        description: "Nbr de congés divers"
+        type: integer
+      employe_id:
+        description: "Id de l'employé"
+        type: integer
+        
+  Statut:
+    description: "Table statut des absences"
+    type: object
+    properties: 
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      statut_code:
+        description: "Code du statut"
+        type: string
+      statut_name: 
+        description: "Nom du statut"
+        type: string
+        
+  Type:
+    description: "Table type d'absence"
+    type: object
+    properties: 
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      type_code:
+        description: "Code du type"
+        type: string
+      type_name: 
+        description: "Nom du type"
+        type: string
+        
+  Absence:
+    description: "Table absences"
+    type: object
+    properties: 
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      request_date:
+        description: "Date de la demande ou de la relance"
+        type: string
+      request_number:
+        description: "Numéro de la demande"
+        type: string
+      begin_data:
+        description: "Date de début de l'absence"
+        type: string
+      end_date:
+        description: "Date de fin de l'absence"
+        type: string
+      commentaire:
+        description: "Commentaire sur le refus de l'absence"
+        type: string
+      statut_id:
+        description: "Statut de l'absence"
+        type: integer
+      type_id:
+        description: "Type de l'absence"
+        type: integer
+      employe_id:
+        description: "Id de l'employé"
+        type: integer
+        
+  Request_number:
+    description: "Table gérant les numéros d'absence"
+    type: object
+    properties: 
+      id:
+        description: "Identifiant de la table"
+        type: integer
+      absence_type_code:
+        description: "Code du type"
+        type: string
+      request_number:
+        description: "Numéro de la demande"
+        type: string
+        
+  Employes:
+    description: "Liste des employés"
+    type: array
+    items:
+      $ref: '#/definitions/Employe'
+
+  Absences:
+    description: "Liste des absences"
+    type: array
+    items:
+      $ref: '#/definitions/Absence'
+
+  Employe_dto:
+    description: "Affichage d'un employé"
+    type: "object"
+    properties:
+      last_name:
+        description: "Nom de l'employé"
+        type: "string"
+      first_name:
+        description: "Prénom de l'employé"
+        type: "string"
+      email :
+        description: "Email de l'employé"
+        type: "string"
+      registration:
+        description: "Matricule de l'employé"
+        type: "string"
+      team:
+        description: "equipe de l'employé"
+        type: "array"
+        items:
+          $ref: '#/definitions/Team_dto'
+      rh_department:
+        description: "service RH de l'employé"
+        type: "array"
+        items:
+          $ref: '#/definitions/Rh_department_dto'
+      reliquat:
+        description: "reliquats de l'employé"
+        type: "array"
+        items:
+          $ref: '#/definitions/Reliquat_dto'
+      absences:
+        description: "liste des absences de l'employé"
+        type: "array"
+        items:
+          $ref: '#/definitions/Absences_dto'
+      user: 
+        description: "Autorisations accordées"
+        type: "array"
+        items:
+          $ref: '#/definitions/User_dto'
+
+  User_dto:
+    description: "Profil de l'utilsateur"
+    type: "object"
+    properties: 
+      role:
+        description : "Profil accordé"
+        type: "array"
+        items: 
+          $ref: '#/definitions/Role_dto'
+        
+  Team_dto:
+    description: "Affichage d'une équipe"
+    type: object
+    properties: 
+      team_code:
+        description: "Code de l'équipe"
+        type: string
+      team_name:
+        description: "Nom de l'équipe"
+        type: string
+      resp_last_name:
+        description: "Nom du responsable"
+        type: string
+      resp_first_name:
+        description: "Prénom du responsable"
+        type: string
+      resp_email:
+        description: "Email du responsable"
+        type: string
+      back_last_name:
+        description: "Nom du remplacant"
+        type: string
+      back_first_name:
+        description: "Prénom du remplacant"
+        type: "string"
+      back_email:
+        description: "Email du remplacement"
+        type: string
+        
+  Rh_department_dto:
+    description: "Saisie et affichage d'un service RH"
+    type: object
+    properties: 
+      rh_departement_code:
+        description: "Code du service Rh"
+        type: "string"
+      rh_department_name:
+        description: "Nom du service RH"
+        type: string
+      rh_department_email:
+        description: "Email du service Rh"
+        type: string
+        
+  Reliquat_dto:
+    description: "Décompte des absences de l'empoyé"
+    type: object
+    properties: 
+      ca_number:
+        description: "Nbr de congés annuels"
+        type: integer
+      rtt_number:
+        description: "Nbr de R.T.T."
+        type: integer
+      rc_number:
+        description: "Nbr de repos compensateur"
+        type: integer
+      cm_number:
+        description: "Nbr de congés maladies"
+        type: integer
+      at_number:
+        description: "Nbr d'accidents de travail"
+        type: integer
+      divers_number:
+        description: "Nbr de congés divers"
+        type: integer
+        
+  Absence_dto:
+    description: "Absence de l'employé"
+    type: object
+    properties: 
+      request_date:
+        description: "Date de la demande ou de la relance"
+        type: string
+      request_number:
+        description: "Numéro de la demande"
+        type: string
+      begin_data:
+        description: "Date de début de l'absence"
+        type: string
+      end_date:
+        description: "Date de fin de l'absence"
+        type: string
+      statut:
+        description: "statut de l'absence"
+        type: "array"
+        items:
+          $ref: '#/definitions/Statut_dto'
+      type:
+        description: "type de l'absence"
+        type: "array"
+        items: 
+          $ref: '#/definitions/Type_dto'
+
+  Role_dto:
+    description: "Niveau des autorisations"
+    type: "object"
+    properties:
+      role_code:
+        description: "Code de l'autorisation"
+        type: string
+      role_name: 
+        description: "Nom de l'autorisation"
+        type: string
+
+  Statut_dto:
+    description: "Statut de l'absence"
+    type: "object"
+    properties:
+      statut_code: 
+        description: "Code du statut"
+        type: "string"
+      statut_name:
+        description: "Nom du statut"
+        type: "string"
+
+  Type_dto:
+    description: "Type d'absence"
+    type: "object"
+    properties:
+      type_code:
+        description: "Code du type d'absences"
+        type: "string"
+      type_name:
+        description: "Nom du type d'absence"
+        type: "string"
+        
+  Absences_dto:
+    description: "Liste des absences"
+    type: array
+    items:
+      $ref: '#/definitions/Absence_dto'
+      
+  Employes_dto:
+    description: "Liste des employés"
+    type: array
+    items:
+      $ref: '#/definitions/Employe_dto'
+
+  Teams_dto:
+    description: "Liste des équipes"
+    type: "array"
+    items:
+      $ref: '#/definitions/Team_dto'
+  
+  Rh_departments_dto:
+    description: "Liste des services Rh"
+    type: "array"
+    items:
+      $ref: '#/definitions/Rh_department_dto'
+
+  Roles_dto:
+    description: "Liste des autorisations"
+    type: "array"
+    items:
+      $ref: '#/definitions/Role_dto'
+
+  Reliquats_dto:
+    description: "Liste des reliquats"
+    type: "array"
+    items:
+      $ref: '#/definitions/Reliquat_dto'
+
+  Statuts_dto:
+    description: "Liste des statuts d'absences"
+    type: "array"
+    items:
+      $ref: '#/definitions/Statut_dto'
+
+  Types_dto:
+    description: "Liste des types d'absences"
+    type: "array"
+    items:
+      $ref: '#/definitions/Type_dto'
+
+  Employe_input:
+    description: "Ajouter un employé"
+    type: "object"
+    properties:
+      last_name:
+        description: "Nom de l'employé"
+        type: "string"
+      first_name:
+        description: "Prénom de l'employé"
+        type: "string"
+      email :
+        description: "Email de l'employé"
+        type: "string"
+      registration:
+        description: "Matricule de l'employé"
+        type: "string"
+      team_name:
+        description: "Nom de l'équipe de l'employé"
+        type: "string"
+      rh_department_name:
+        description: "Nom du service RH de l'employé"
+        type: "string"
+      role_name: 
+        description: "Nom de l'autorisation accordée"
+        type: "string"
+
+  Team_input:
+    description: "Ajouter une équipe"
+    type: "object"
+    properties:
+      team_name:
+        description: "Nom de l'équipe"
+        type: "string"
+      responsable_name:
+        description: "Nom du responsable"
+        type: "string"
+      backup_name :
+        description: "Nom du remplacent"
+        type: "string" 
+
+  Rh_department_input:
+    description: "Ajouter un service Rh"
+    type: "object"
+    properties:
+      rh_department_name:
+        description: "Nom du service Rh"
+        type: "string"
+      rh_department_email:
+        description: "Email du service Rh"
+        type: "string"
+        
+  Role_input:
+    description: "Ajouter une autorisation"
+    type: "object"
+    properties:
+      role_name: 
+        description: "Nom de l'autorisatioon"
+        type: "string"
+
+  Statut_input:
+    description: "Ajouter un statut d'absence"
+    type: "object"
+    properties: 
+      statut_name:
+        description: "Nom du statut de l'absence"
+        type: "string"
+
+  Type_input:
+    description: "Ajouter un type d'absence"
+    type: "object"
+    properties: 
+      type_name:
+        description: "Nom du type d'absence"
+        type: "string"
+    
+##################
+#     Paging     #
+##################
+  Paging:
+    description: "Results pagination"
+    type: "object"
+    properties:
+      next:
+        description: "Next page"
+        type: "string"
+      prev:
+        description: "Previous page"
+        type: "string"
+      total_results:
+        description: "Results total count"
+        type: "number"
+
+##################
+#     Error(s)   #
+##################
+  Error:
+    description: "Erreur"
+    type: "object"
+    properties:
+      code:
+        type: "string"
+      message:
+        type: "string"
+
+  Errors:
+    description: "Liste des erreurs"
+    type: "object"
+    properties:
+      errors:
+        type: "array"
+        items:
+          $ref: '#/definitions/Error'
+
+
+###############################################################################
+#                                   Parameters                                #
+###############################################################################
+
+##################
+#   Parametres   #
+##################
+
+parameters:
+
+  no_parameter:
+    name: "no_parameter"
+    in: "path"
+    description: "Pas de paramètre en entrée"
+    required: true
+    type: "string"
+
+  employe:
+    name: "employe"
+    in: "body"
+    description: "saisie d'un employe"
+    required: true
+    schema:
+      $ref: '#/definitions/Employe_input'
+
+  employe_registration:
+    name: "employe_registration"
+    in: "path"
+    description: "Matricule de l'employé"
+    maxLength: 10
+    type: "string"
+    required: true
+
+  employe_name:
+    name: "employe_name"
+    in: "path"
+    description: "Lettres du nom d'un employé"
+    type: "string"
+    required: true
+
+  team:
+    name: "team"
+    in: "body"
+    description: "saisie d'une équipe"
+    required: true
+    schema:
+      $ref: '#/definitions/Team_input'
+
+  team_code:
+    name: "team_code"
+    in: "path"
+    description: "code de l'équipe"
+    maxLength: 10
+    type: "integer"
+    required: true
+    
+  team_name:
+    name: "team_name"
+    in: "path"
+    description: "Nom de d'équipe"
+    type: "string"
+    required: true
+
+  rh_department:
+    name: "rh_department"
+    in: "body"
+    description: "saisie d'un service Rh"
+    required: true
+    schema:
+      $ref: '#/definitions/Rh_department_input'
+
+  rh_department_code:
+    name: "rh_department_code"
+    in: "path"
+    description: "code du service Rh"
+    maxLength: 10
+    type: "integer"
+    required: true
+    
+  rh_department_name:
+    name: "rh_department_name"
+    in: "path"
+    description: "Nom du service Rh"
+    type: "string"
+    required: true
+
+  role:
+    name: "role"
+    in: "body"
+    description: "Saisie d'une nouvelle autorisation"
+    required: true
+    schema:
+      $ref: '#/definitions/Role_input'
+
+  statut:
+    name: "statut"
+    in: "body"
+    description: "Saisie d'un nouveau statut d'absence"
+    required: true
+    schema: 
+      $ref: '#/definitions/Statut_input'
+
+  type_abs:
+    name: "type"
+    in: "body"
+    description: "Saisie d'un nouveau type d'absence"
+    required: true
+    schema:
+      $ref: '#/definitions/Type_input'
+    
+##################
+#    Sécurité    #
+##################
+    
+securityDefinitions:
+  absence_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:RH: "Ecriture/modification/suppression d'un élément de la base de données"
+      write:Admin: "modification de la base par l'admin"
+      read:Admin+Rh: "Lecture de la base de données"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
