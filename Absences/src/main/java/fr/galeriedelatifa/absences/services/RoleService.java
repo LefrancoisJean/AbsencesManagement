@@ -5,6 +5,8 @@
 package fr.galeriedelatifa.absences.services;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -52,6 +54,16 @@ public class RoleService implements Serializable {
 			System.err.println("Erreur de création " + roleName + e);
 		}
 		return newRole;
+	}
+
+	public List<Role> getRoles() {
+		List<Role> roles = new ArrayList<Role>();
+		try {
+			roles = roleDao.findAll();
+		} catch (Exception e) {
+			logger.error("Erreur de lecture de la base " + e);
+		}
+		return roles;
 	}
 
 }

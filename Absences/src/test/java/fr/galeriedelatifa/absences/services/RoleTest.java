@@ -7,6 +7,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,17 +22,16 @@ import fr.galeriedelatifa.absences.Config;
 import fr.galeriedelatifa.absences.data.RoleDao;
 import fr.galeriedelatifa.absences.entities.Role;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Config.class)
 public class RoleTest {
-	
+
 	@Mock
 	RoleDao roleDao;
-	
+
 	@InjectMocks
 	RoleService roleService;
-	
+
 	@Test
 	public void createTestOk() {
 		Role role = new Role();
@@ -39,15 +40,33 @@ public class RoleTest {
 		role2.setRoleName("roleName");
 		Mockito.when(roleDao.save(role)).thenReturn(role2);
 		System.out.println(role2.getRoleName());
-		assertEquals(null,roleService.create(anyString()));
-		
+		assertEquals(null, roleService.create(anyString()));
+
 	}
-	
-	@Test(expected  = Exception.class)
+
+	@Test(expected = Exception.class)
 	public void createTestKo() throws Exception {
 		Role role = new Role();
 		Mockito.when(roleDao.save(role)).thenThrow(new SQLException());
 		assertNull(roleService.create(anyString()));
+	}
+
+	// Test avec une liste
+	@Test
+	public void getRolesTest() throws SQLException {
+		List<Role> role = new ArrayList<Role>();
+		when(roleDao.findAll()).thenReturn(role);
+
+		assertEquals(role, roleService.getRoles());
+	}
+
+	// Test avec une liste
+	@Test(expected = Exception.class)
+	public void getRolesTestKO() throws Exception {
+		List<Role> role = new ArrayList<Role>();
+		when(roleDao.findAll()).thenThrow(new Exception());
+
+		assertNull(roleService.getRoles());
 	}
 
 }
