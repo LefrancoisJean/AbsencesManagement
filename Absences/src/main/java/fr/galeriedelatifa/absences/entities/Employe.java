@@ -51,7 +51,7 @@ public class Employe implements Serializable {
 	@Column(name = "users_id", nullable=false)
 	private Users user;
 	
-	private List<Absences> absences;
+//	private List<Absences> absences;
 
 	public Long getId() {
 		return id;
@@ -117,13 +117,13 @@ public class Employe implements Serializable {
 		this.user = user;
 	}
 
-	public List<Absences> getAbsences() {
-		return absences;
-	}
-
-	public void setAbsences(List<Absences> absences) {
-		this.absences = absences;
-	}
+//	public List<Absences> getAbsences() {
+//		return absences;
+//	}
+//
+//	public void setAbsences(List<Absences> absences) {
+//		this.absences = absences;
+//	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;

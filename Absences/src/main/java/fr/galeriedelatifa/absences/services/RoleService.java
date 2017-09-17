@@ -33,21 +33,25 @@ public class RoleService implements Serializable {
 	@Autowired
 	RoleDao roleDao;
 
-	public String create(String roleName) {
+	/**
+	 * 
+	 * Create a new Role
+	 * @param roleName
+	 * @return Role
+	 * 
+	 */
+	public Role create(String roleName) {
 		Role role = new Role();
+		Role newRole = new Role();
 		try {
-			if(!roleName.isEmpty()||!(roleName==null)) {
 			role.setRoleCode(UUID.randomUUID().toString());
 			role.setRoleName(roleName);
-			roleDao.save(role);
-			} else {
-				throw new Exception("Champs vide");
-			}
+			newRole = roleDao.save(role);
 		} catch (Exception e) {
 			logger.error("Erreur de création " + roleName, e);
 			System.err.println("Erreur de création " + roleName + e);
 		}
-		return role.getRoleCode();
+		return newRole;
 	}
 
 }

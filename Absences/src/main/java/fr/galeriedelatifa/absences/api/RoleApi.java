@@ -5,21 +5,14 @@
 package fr.galeriedelatifa.absences.api;
 
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.galeriedelatifa.absences.entities.Role;
 import fr.galeriedelatifa.absences.services.RoleService;
 
 /**
@@ -40,15 +33,15 @@ public class RoleApi implements Serializable {
 	/**
 	 * Création d'une autorisation
 	 * @param roleName
-	 * @return
+	 * @return 200 OK
 	 */
 	@PostMapping()
-	public ResponseEntity<?> save(@RequestBody String roleName) {
+	public ResponseEntity<String> save(@RequestBody String roleName) {
 		
 		
-			String name = role.create(roleName);
+			Role name = role.create(roleName);
 		
-		return ResponseEntity.ok("Autorisation "+name+" créée");
+		return ResponseEntity.ok("Autorisation "+name.getRoleCode()+" créée");
 		
 		
 	}
