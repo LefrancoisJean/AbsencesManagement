@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import fr.galeriedelatifa.absences.AbsencesManagementApplication;
 import fr.galeriedelatifa.absences.data.RoleDao;
 import fr.galeriedelatifa.absences.entities.Role;
+import fr.galeriedelatifa.absences.entities.dto.RoleDto;
 
 /**
  * @author Galerie de Latifa
@@ -50,20 +51,35 @@ public class RoleService implements Serializable {
 			role.setRoleName(roleName);
 			newRole = roleDao.save(role);
 		} catch (Exception e) {
-			logger.error("Erreur de création " + roleName, e);
+			logger.error("Erreur de création du role" + roleName, e);
 			System.err.println("Erreur de création " + roleName + e);
 		}
 		return newRole;
 	}
 
-	public List<Role> getRoles() {
-		List<Role> roles = new ArrayList<Role>();
+	public List<Role> getRoles() throws Exception{
+		List<Role> roles = new ArrayList<>();
 		try {
 			roles = roleDao.findAll();
 		} catch (Exception e) {
-			logger.error("Erreur de lecture de la base " + e);
+			logger.error("Erreur de lecture de la base role" + e);
+			throw new Exception("Error !: getRoles" + e);
+
 		}
 		return roles;
+	}
+
+	public Role updateRole(RoleDto roleDto) throws Exception {
+		Role role = new Role();
+		try {
+			role = roleDao.findByRoleCode(roleDto.getRoleCode());
+			role.setRoleName(roleDto.getRoleName());
+			role = roleDao.save(role);
+		} catch (Exception e) {
+			logger.error("Erreur de la mise à jour de la base Role" + role.getRoleName(), e);
+			throw new Exception("Error !: updateRole" + e);
+		}
+		return role;
 	}
 
 }

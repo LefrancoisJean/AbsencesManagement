@@ -2,6 +2,8 @@ package fr.galeriedelatifa.absences.entities.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 public class RoleDto implements Serializable {
 	
 	/**
@@ -11,6 +13,7 @@ public class RoleDto implements Serializable {
 
 	private String roleCode;
 	
+	@NotNull(message = "Ce champs ne peut être nul ou vide")
 	private String roleName;
 
 	public String getRoleCode() {
