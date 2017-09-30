@@ -20,7 +20,7 @@ info:
 host: "localhost:8080"
 basePath: "/gestAbs/v1"
 schemes:
-  - "https"
+  - "http"
 produces:
   - "application/json"
 consumes:
@@ -109,7 +109,7 @@ paths:
       summary: "Modification d'une autorisation"
       description: "Modifie les champs d'une autorisation."
       parameters:
-        - $ref: '#/parameters/role'
+        - $ref: '#/parameters/role_dto'
       operationId: "updateRole"
       tags:
         - "Roles"
@@ -139,13 +139,47 @@ paths:
       summary: "Suppression d'une autorisation"
       description: "Supprime une autorisation."
       parameters:
-        - $ref: '#/parameters/role'
+        - $ref: '#/parameters/role_dto'
       operationId: "deleteRole"
       tags:
         - "Roles"
       responses:
         204:
           description: "No content"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+  
+  /role/{role_code}:
+    get:
+      summary: "Affiche une autorisation"
+      description: "Retourne une autorisation"
+      operationId: "getRoleByCode"
+      parameters:
+        - $ref: '#/parameters/role_code'
+      tags:
+        - "Roles"
+      responses:
+        200:
+          description: "OK"
+          schema: 
+            type: object
+            properties:
+              pages:
+                $ref: '#/definitions/Role_dto'
         400:
           description: "Bad Request"
           schema:
@@ -290,6 +324,42 @@ paths:
       - absence_auth:
         - "write:Admin"
         - "read:Admin+Rh"
+        
+  /statut/{statut_code}:
+    get:
+      summary: "Affiche un statut d'absence"
+      description: "Retourne un statut d'absence"
+      operationId: "getStatutByCode"
+      parameters:
+        - $ref: '#/parameters/statut_code'
+      tags:
+        - "Statuts"
+      responses:
+        200:
+          description: "OK"
+          schema: 
+            type: object
+            properties:
+              pages:
+                $ref: '#/definitions/Statut_dto'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
+        
+  
 
 ##################
 #      Type      #
@@ -418,12 +488,46 @@ paths:
       - absence_auth:
         - "write:Admin"
         - "read:Admin+Rh"
+        
+  /type/{type_code}:
+    get:
+      summary: "Affiche un type d'absence"
+      description: "Retourne un type d'absence"
+      operationId: "getTypeByCode"
+      parameters:
+        - $ref: '#/parameters/type_code'
+      tags:
+        - "Types"
+      responses:
+        200:
+          description: "OK"
+          schema: 
+            type: object
+            properties:
+              pages:
+                $ref: '#/definitions/Statut_dto'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/Errors'
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: '#/definitions/Errors'
+        503:
+          description: "Service temporarily unavailable"
+      security:
+      - absence_auth:
+        - "write:Admin"
+        - "read:Admin+Rh"
 
 ##################
 # Rh_departments #
 ##################
 
-  /rh_department:
+  /rh_departments:
     post:
       summary: "Ajoute un nouveau service Rh"
       description: "Saisie un service rh"
@@ -578,7 +682,7 @@ paths:
         - "write:Admin"
         - "read:Admin+Rh"
 
-  /rh_department/{rh_department_name}:
+  /rh_departments/{rh_department_name}:
     get:
       summary: "liste des services Rh par le nom"
       description: "Retourne une liste des services Rh en faisant une recherche par le nom. Une lettre suffit pour afficher la liste"
@@ -714,7 +818,7 @@ paths:
         - "write:RH"
         - "read:Admin+Rh"
 
-  /teams/{team_code}:
+  /team/{team_code}:
     get:
       summary: "Detail d'une équipe"
       description: "Retourne le détail d'une équipe par le code."
@@ -911,7 +1015,7 @@ paths:
         - "write:RH"
         - "read:Admin+Rh"
 
-  /employes/{employe_registration}:
+  /employe/{employe_registration}:
     get:
       summary: "Detail d'un employé"
       description: "Retourne le détail d'un employé par le matricule."
@@ -970,7 +1074,7 @@ paths:
         - "write:RH"
         - "read:Admin+Rh"
         
-  /employes/{employe_name}:
+  /employee/{employe_name}:
     get:
       summary: "liste des employés par le nom"
       description: "Retourne une liste d'employés en faisant une recherche par le nom. Une lettre suffit pour afficher la liste"
@@ -1042,7 +1146,7 @@ paths:
         - "write:RH"
         - "read:Admin+Rh"
       
-  /employes/{rh_department_name}:
+  /employees/{rh_department_name}:
     get:
       summary: "Liste des employés d'un service Rh"
       description: "Retourne une liste d'employés d'un service Rh"
@@ -1654,13 +1758,6 @@ definitions:
 
 parameters:
 
-  no_parameter:
-    name: "no_parameter"
-    in: "path"
-    description: "Pas de paramètre en entrée"
-    required: true
-    type: "string"
-
   employe:
     name: "employe"
     in: "body"
@@ -1673,7 +1770,7 @@ parameters:
     name: "employe_registration"
     in: "path"
     description: "Matricule de l'employé"
-    maxLength: 10
+    maxLength: 40
     type: "string"
     required: true
 
@@ -1696,8 +1793,7 @@ parameters:
     name: "team_code"
     in: "path"
     description: "code de l'équipe"
-    maxLength: 10
-    type: "integer"
+    type: "string"
     required: true
     
   team_name:
@@ -1719,8 +1815,7 @@ parameters:
     name: "rh_department_code"
     in: "path"
     description: "code du service Rh"
-    maxLength: 10
-    type: "integer"
+    type: "string"
     required: true
     
   rh_department_name:
@@ -1737,6 +1832,13 @@ parameters:
     required: true
     schema:
       $ref: '#/definitions/Role_input'
+      
+  role_code:
+    name: "role_code"
+    in: "path"
+    description: "code de l'autorisation"
+    type: "string"
+    required: true
 
   statut:
     name: "statut"
@@ -1745,6 +1847,13 @@ parameters:
     required: true
     schema: 
       $ref: '#/definitions/Statut_input'
+      
+  statut_code:
+    name: "statut_code"
+    in: "path"
+    description: "statut de l'absence"
+    type: "string"
+    required: true
 
   type_abs:
     name: "type"
@@ -1753,6 +1862,21 @@ parameters:
     required: true
     schema:
       $ref: '#/definitions/Type_input'
+      
+  type_code:
+    name: "type_code"
+    in: "path"
+    description: "type de l'absence"
+    type: "string"
+    required: true
+      
+  role_dto:
+    name: "role_dto"
+    in: "body"
+    description: "modif ou suppression d'un role"
+    required: true
+    schema: 
+      $ref: '#/definitions/Roles_dto'
     
 ##################
 #    Sécurité    #
