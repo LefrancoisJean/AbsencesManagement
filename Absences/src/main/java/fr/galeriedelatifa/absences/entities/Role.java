@@ -1,6 +1,7 @@
 package fr.galeriedelatifa.absences.entities;
 
 import java.io.Serializable;
+import java.util.Base64;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,11 +53,12 @@ public class Role implements Serializable{
 	}
 
 	public String getRoleName() {
-		return roleName;
+		byte[] role = Base64.getDecoder().decode(roleName);
+		return new String(role);
 	}
 
 	public void setRoleName(String roleName) {
-		this.roleName = roleName;
+		this.roleName = Base64.getEncoder().encodeToString(roleName.getBytes());
 	}
 
 	public static long getSerialversionuid() {

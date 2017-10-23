@@ -1,6 +1,8 @@
 package fr.galeriedelatifa.absences.services;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,6 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.galeriedelatifa.absences.data.RoleDao;
 import fr.galeriedelatifa.absences.entities.Role;
+import fr.galeriedelatifa.absences.entities.dto.RoleDto;
+import fr.galeriedelatifa.absences.exceptions.ResourceNotFoundException;
+import fr.galeriedelatifa.absences.services.utils.AbsencesMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,6 +28,9 @@ public class RoleTest {
 	
 	@Mock
 	RoleDao roleDao;
+	
+	@Mock
+	AbsencesMapper mapper;
 	
 	@InjectMocks
 	RoleService roleService;
@@ -44,21 +52,37 @@ public class RoleTest {
 		role.setRoleCode("rolecode");
 		role.setRoleName("rolename");
 		List<Role> roles = new ArrayList<>();
+		List<RoleDto> roleDto = new ArrayList<>();
 		roles.add(role);
 		when(roleDao.findAll()).thenReturn(roles);
-		assertEquals(roles, roleService.getRoles());
+		roleDto = mapper.rolesEntityToDtos(roles);
+		assertEquals(roleDto.size(), roleService.getRoles().size());
+	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void getRoles_ko(){
+
+		when(roleDao.findAll()).thenThrow(new ResourceNotFoundException("role"));
+		roleService.getRoles();
 	}
 	
 	@Test
-	public void getRoles_ko() throws Exception {
+	public void getRoleByCode() throws Exception {
 		Role role = new Role();
 		role.setId((long) 1);
 		role.setRoleCode("rolecode");
 		role.setRoleName("rolename");
-		List<Role> roles = new ArrayList<>();
-		roles.add(role);
-		when(roleDao.findAll()).thenThrow(new Exception());
-		assertEquals(roles, roleService.getRoles());
+		
+		when(roleDao.findByRoleCode(any())).thenReturn(role);
+		RoleDto roleDto = mapper.roleEntityToDto(role);
+		assertEquals(roleDto, roleService.getRolebyCode(role.getRoleCode()));
+	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void getRoleByCode_ko(){
+
+		when(roleDao.findByRoleCode(any())).thenReturn(null);
+		roleService.getRoles();
 	}
 
 }

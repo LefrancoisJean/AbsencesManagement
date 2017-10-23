@@ -14,4 +14,6 @@ public interface RoleDao extends JpaRepository<Role, Long>, Serializable {
 	
 	Role findByRoleCode(String roleCode);
 	
+	Role findByRoleName(String roleName);
+	
 }

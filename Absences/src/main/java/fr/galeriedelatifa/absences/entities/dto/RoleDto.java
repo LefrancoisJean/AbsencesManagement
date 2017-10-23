@@ -11,9 +11,10 @@ public class RoleDto implements Serializable {
 	 */
 	private static final long serialVersionUID = -6033963707452871594L;
 
+	@NotNull(message = "Ce champs code ne peut être nul ou vide")
 	private String roleCode;
 	
-	@NotNull(message = "Ce champs ne peut être nul ou vide")
+	@NotNull(message = "Ce champs name ne peut être nul ou vide")
 	private String roleName;
 
 	public String getRoleCode() {
